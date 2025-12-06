@@ -1,0 +1,35 @@
+[Unit]
+Description=DocFlow Document Converter
+Documentation=https://github.com/yourusername/docflow
+After=network.target
+
+[Service]
+Type=simple
+User=docflow
+Group=docflow
+WorkingDirectory=/opt/docflow
+EnvironmentFile=/opt/docflow/.env
+ExecStart=/opt/docflow/bin/docflow-server
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/opt/docflow/data
+
+# Resource limits
+LimitNOFILE=65535
+MemoryMax=1G
+TasksMax=100
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,562 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================
+   CSS Variables - Theme System
+   ================================ */
+:root,
+:root.light {
+  /* Background colors */
+  --color-bg-main: #f8fafc;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f1f5f9;
+  --color-bg-input: #f1f5f9;
+  --color-bg-elevated: #ffffff;
+  
+  /* Border colors */
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+  
+  /* Text colors */
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-text-heading: #0f172a;
+  
+  /* Accent colors */
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+  --color-accent-light: #e0e7ff;
+  --color-accent-muted: #c7d2fe;
+  
+  /* Component specific */
+  --color-dropzone-bg: #fafafa;
+  --color-dropzone-border: #cbd5e1;
+  --color-file-item-bg: #f8fafc;
+  --color-file-badge: #e2e8f0;
+  --color-scrollbar-track: #f1f5f9;
+  --color-scrollbar-thumb: #cbd5e1;
+  
+  /* Code colors */
+  --color-code-bg: #f1f5f9;
+  --color-code-text: #db2777;
+  --color-pre-bg: #1e293b;
+  --color-pre-text: #e2e8f0;
+  
+  /* Status colors */
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-success-text: #059669;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-error-border: rgba(239, 68, 68, 0.3);
+  --color-error-text: #dc2626;
+}
+
+:root.dark {
+  /* Background colors */
+  --color-bg-main: linear-gradient(135deg, #12141a 0%, #1a1d26 50%, #12141a 100%);
+  --color-bg-card: rgba(24, 24, 27, 0.7);
+  --color-bg-card-hover: rgba(39, 39, 42, 0.5);
+  --color-bg-input: #27272a;
+  --color-bg-elevated: #18181b;
+  
+  /* Border colors */
+  --color-border: #3f3f46;
+  --color-border-hover: #52525b;
+  
+  /* Text colors */
+  --color-text-primary: #e4e4e7;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-text-heading: #fafafa;
+  
+  /* Accent colors */
+  --color-accent: #818cf8;
+  --color-accent-hover: #6366f1;
+  --color-accent-light: rgba(99, 102, 241, 0.15);
+  --color-accent-muted: rgba(99, 102, 241, 0.3);
+  
+  /* Component specific */
+  --color-dropzone-bg: rgba(24, 24, 27, 0.5);
+  --color-dropzone-border: #3f3f46;
+  --color-file-item-bg: rgba(39, 39, 42, 0.5);
+  --color-file-badge: #3f3f46;
+  --color-scrollbar-track: #1a1d26;
+  --color-scrollbar-thumb: #3f3f46;
+  
+  /* Code colors */
+  --color-code-bg: #3f3f46;
+  --color-code-text: #f472b6;
+  --color-pre-bg: #12141a;
+  --color-pre-text: #d4d4d8;
+  
+  /* Status colors */
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-success-border: rgba(16, 185, 129, 0.3);
+  --color-success-text: #34d399;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-error-border: rgba(239, 68, 68, 0.3);
+  --color-error-text: #f87171;
+}
+
+/* ================================
+   Base Styles
+   ================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.light body,
+:root.light body {
+  background: var(--color-bg-main);
+  color: var(--color-text-primary);
+}
+
+.dark body,
+:root.dark body {
+  background: var(--color-bg-main);
+  color: var(--color-text-primary);
+}
+
+/* ================================
+   Utility Classes for Theming
+   ================================ */
+.bg-main {
+  background: var(--color-bg-main);
+}
+
+.bg-card {
+  background: var(--color-bg-card);
+}
+
+.bg-elevated {
+  background: var(--color-bg-elevated);
+}
+
+.bg-input {
+  background: var(--color-bg-input);
+}
+
+.text-heading {
+  color: var(--color-text-heading);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.border-themed {
+  border-color: var(--color-border);
+}
+
+/* ================================
+   Custom Scrollbar
+   ================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* ================================
+   Markdown Preview Styles
+   ================================ */
+.markdown-preview {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3,
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6 {
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: var(--color-text-heading);
+}
+
+.markdown-preview h1 {
+  font-size: 1.875rem;
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: 0.5rem;
+}
+
+.markdown-preview h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.25rem;
+}
+
+.markdown-preview h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-preview h4 {
+  font-size: 1.1rem;
+}
+
+.markdown-preview p {
+  margin-bottom: 1em;
+}
+
+.markdown-preview a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.markdown-preview a:hover {
+  text-decoration: underline;
+  color: var(--color-accent-hover);
+}
+
+.markdown-preview code {
+  background: var(--color-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.875em;
+  color: var(--color-code-text);
+}
+
+.markdown-preview pre {
+  background: var(--color-pre-bg);
+  color: var(--color-pre-text);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-left: 3px solid var(--color-accent);
+}
+
+.markdown-preview pre code {
+  background: none;
+  padding: 0;
+  color: var(--color-pre-text);
+}
+
+.markdown-preview blockquote {
+  border-left: 3px solid var(--color-accent);
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background: var(--color-accent-light);
+  color: var(--color-text-secondary);
+  font-style: italic;
+  border-radius: 0 8px 8px 0;
+}
+
+.markdown-preview blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.markdown-preview li {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-preview li > ul,
+.markdown-preview li > ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.markdown-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.markdown-preview th,
+.markdown-preview td {
+  border: 1px solid var(--color-border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.markdown-preview th {
+  background: var(--color-accent);
+  color: white;
+  font-weight: 600;
+}
+
+.markdown-preview tr:nth-child(even) {
+  background: var(--color-accent-light);
+}
+
+.markdown-preview hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2rem 0;
+}
+
+.markdown-preview img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+/* File separator in merge preview */
+.markdown-preview .file-separator {
+  border-top: 2px dashed var(--color-accent);
+  margin: 2em 0 1em 0;
+  padding-top: 1em;
+}
+
+.markdown-preview .file-separator span,
+.markdown-preview .file-header span {
+  display: inline-block;
+  background: var(--color-accent);
+  color: white;
+  padding: 0.25em 0.75em;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+.markdown-preview .file-header {
+  margin-bottom: 1em;
+}
+
+.markdown-preview .file-content {
+  margin-bottom: 1em;
+}
+
+/* Task lists */
+.markdown-preview .task-list-item {
+  list-style-type: none;
+  margin-left: -1.5em;
+}
+
+.markdown-preview .task-list-item input {
+  margin-right: 0.5em;
+}
+
+/* Error state */
+.markdown-preview .error {
+  color: var(--color-error-text);
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ================================
+   Animations
+   ================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ================================
+   Component Overrides for Theme
+   ================================ */
+
+/* Cards */
+.bg-zinc-900\/70 {
+  background: var(--color-bg-card) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Borders */
+.border-zinc-800,
+.border-zinc-700 {
+  border-color: var(--color-border) !important;
+}
+
+/* Text colors */
+.text-zinc-100 {
+  color: var(--color-text-heading) !important;
+}
+
+.text-zinc-200 {
+  color: var(--color-text-primary) !important;
+}
+
+.text-zinc-300 {
+  color: var(--color-text-primary) !important;
+}
+
+.text-zinc-400 {
+  color: var(--color-text-secondary) !important;
+}
+
+.text-zinc-500 {
+  color: var(--color-text-muted) !important;
+}
+
+.text-zinc-600 {
+  color: var(--color-text-muted) !important;
+}
+
+/* Background colors */
+.bg-zinc-800 {
+  background: var(--color-file-badge) !important;
+}
+
+.bg-zinc-900 {
+  background: var(--color-bg-elevated) !important;
+}
+
+.bg-zinc-950 {
+  background: var(--color-bg-elevated) !important;
+}
+
+.bg-zinc-900\/50,
+.bg-zinc-800\/50 {
+  background: var(--color-file-item-bg) !important;
+}
+
+/* Hover states */
+.hover\:bg-zinc-800:hover,
+.hover\:bg-zinc-700:hover {
+  background: var(--color-bg-card-hover) !important;
+}
+
+.hover\:bg-zinc-800\/50:hover {
+  background: var(--color-bg-card-hover) !important;
+}
+
+/* Input fields */
+input.bg-zinc-800 {
+  background: var(--color-bg-input) !important;
+  color: var(--color-text-primary) !important;
+}
+
+input.border-zinc-700 {
+  border-color: var(--color-border) !important;
+}
+
+input::placeholder {
+  color: var(--color-text-muted) !important;
+}
+
+/* Dropzone */
+.border-dashed.border-zinc-700 {
+  border-color: var(--color-dropzone-border) !important;
+  background: var(--color-dropzone-bg) !important;
+}
+
+/* Modal */
+.bg-black\/60 {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Success/Error states */
+.bg-emerald-500\/10 {
+  background: var(--color-success-bg) !important;
+}
+
+.border-emerald-500\/30 {
+  border-color: var(--color-success-border) !important;
+}
+
+.text-emerald-300,
+.text-emerald-400 {
+  color: var(--color-success-text) !important;
+}
+
+.bg-red-500\/10 {
+  background: var(--color-error-bg) !important;
+}
+
+.border-red-500\/30 {
+  border-color: var(--color-error-border) !important;
+}
+
+.text-red-300,
+.text-red-400 {
+  color: var(--color-error-text) !important;
+}
+
+/* ================================
+   Light Theme Specific Shadows
+   ================================ */
+:root.light .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+:root.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Light theme card shadows */
+:root.light .bg-zinc-900\/70,
+:root.light [class*="Card"] {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* ================================
+   Utilities
+   ================================ */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.container-centered {
+    width: 100%;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}

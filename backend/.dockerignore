@@ -1,0 +1,36 @@
+# Dependencies
+vendor/
+
+# Build output
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output
+*.out
+coverage.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Data directories
+temp/
+output/
+data/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
