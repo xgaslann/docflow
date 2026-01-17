@@ -1,12 +1,29 @@
 # Contributing to DocFlow
 
-Thanks for wanting to contribute. Here's how to do it properly.
+Thanks for wanting to contribute! Here's how to do it properly.
 
 ## Ground Rules
 
 1. **Tests are mandatory.** No exceptions. If your PR doesn't include tests, it won't be merged.
 2. **Keep it simple.** Don't over-engineer. If a feature needs 500 lines of code, think again.
 3. **Follow the existing style.** Look at the codebase before writing code.
+
+## Repository Structure
+
+```
+docflow/
+├── app/                    # Web Application (Go + React)
+│   ├── backend/           # Go API server
+│   └── frontend/          # React UI
+├── sdks/                   # Standalone SDKs
+│   ├── go/                # Go SDK
+│   │   └── docflow/       # Core modules
+│   ├── python/            # Python SDK
+│   │   └── docflow/       # Core modules
+│   └── java/              # Java SDK
+│       └── src/main/java/ # Core modules
+└── examples/               # Usage examples
+```
 
 ## Getting Started
 
@@ -19,31 +36,34 @@ cd docflow
 
 ### 2. Set Up Development Environment
 
+**Go SDK:**
 ```bash
-# Backend
-cd backend
+cd sdks/go
 go mod tidy
-
-# Frontend
-cd ../frontend
-npm install
+go test ./...
 ```
 
-### 3. Run Tests
-
-Before making any changes, make sure existing tests pass:
-
+**Python SDK:**
 ```bash
-# Backend tests
-cd backend
-go test -v ./...
-
-# Frontend tests
-cd frontend
-npm test
+cd sdks/python
+pip install -e ".[dev]"
+pytest
 ```
 
-### 4. Create a Branch
+**Java SDK:**
+```bash
+cd sdks/java
+mvn clean compile
+mvn test
+```
+
+**Web App:**
+```bash
+cd app/backend && go mod tidy
+cd ../frontend && npm install
+```
+
+### 3. Create a Branch
 
 ```bash
 git checkout -b feature/your-feature-name
@@ -53,233 +73,227 @@ git checkout -b fix/your-bug-fix
 
 ## Code Style
 
-### Go (Backend)
+### Go
 
 - Use `gofmt` - no exceptions
 - Follow [Effective Go](https://golang.org/doc/effective_go.html)
-- Keep functions small (< 50 lines ideally)
+- Keep functions small (<50 lines ideally)
 - Error messages should be lowercase, no punctuation
 - Add comments for exported functions
 
 ```go
 // Good
-func (s *Service) ProcessFile(ctx context.Context, data []byte) error {
-    if len(data) == 0 {
-        return errors.New("empty data")
-    }
-    // ...
-}
-
-// Bad
-func (s *Service) ProcessFile(ctx context.Context, data []byte) error {
-    if len(data) == 0 {
-        return errors.New("Empty data.") // wrong style
+func (p *Processor) ProcessFile(ctx context.Context, path string) (*Result, error) {
+    if path == "" {
+        return nil, errors.New("empty path")
     }
     // ...
 }
 ```
 
-### JavaScript/React (Frontend)
+### Python
 
-- Use functional components with hooks
-- Use named exports (not default) for components
-- Keep components focused - one job per component
-- Use descriptive variable names
+- Follow PEP 8
+- Use type hints for public APIs
+- Use dataclasses or Pydantic for models
+- Keep functions focused
 
-```jsx
+```python
+# Good
+def process_file(path: str, config: RAGConfig) -> RAGDocument:
+    """Process a file and return a RAG document."""
+    if not path:
+        raise ValueError("path cannot be empty")
+    # ...
+```
+
+### Java
+
+- Follow Google Java Style Guide
+- Use meaningful variable names
+- Add Javadoc for public methods
+- Prefer composition over inheritance
+
+```java
 // Good
-export function FileUploader({ onFilesAdded, disabled }) {
-  const handleDrop = useCallback((files) => {
-    onFilesAdded(files);
-  }, [onFilesAdded]);
-  
-  return <Dropzone onDrop={handleDrop} disabled={disabled} />;
-}
-
-// Bad
-export default function FU({ cb, d }) {
-  return <Dropzone onDrop={cb} disabled={d} />;
+/**
+ * Process a file and return a RAG document.
+ * @param path Path to the file
+ * @return Processed RAG document
+ * @throws IOException if file cannot be read
+ */
+public RAGDocument processFile(String path) throws IOException {
+    if (path == null || path.isEmpty()) {
+        throw new IllegalArgumentException("path cannot be empty");
+    }
+    // ...
 }
 ```
 
 ## Writing Tests
 
-### Backend Tests
-
-Put tests next to the code they test: `service.go` → `service_test.go`
+### Go Tests
 
 ```go
-package service
-
-import (
-    "testing"
-)
-
-func TestMarkdownToHTML(t *testing.T) {
-    svc := NewMarkdownService()
-    
+func TestRAGProcessor_ProcessFile(t *testing.T) {
     tests := []struct {
-        name     string
-        input    string
-        expected string
+        name    string
+        path    string
+        wantErr bool
     }{
-        {
-            name:     "simple heading",
-            input:    "# Hello",
-            expected: "<h1>Hello</h1>",
-        },
-        {
-            name:     "paragraph",
-            input:    "Some text",
-            expected: "<p>Some text</p>",
-        },
+        {"valid file", "testdata/sample.md", false},
+        {"empty path", "", true},
+        {"non-existent", "testdata/missing.md", true},
     }
     
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            result, err := svc.ToHTML(tt.input)
-            if err != nil {
-                t.Fatalf("unexpected error: %v", err)
-            }
-            if !strings.Contains(result, tt.expected) {
-                t.Errorf("expected %q to contain %q", result, tt.expected)
+            p := NewRAGProcessor(DefaultConfig())
+            _, err := p.ProcessFile(tt.path)
+            if (err != nil) != tt.wantErr {
+                t.Errorf("ProcessFile() error = %v, wantErr %v", err, tt.wantErr)
             }
         })
     }
 }
 ```
 
-### Frontend Tests
+### Python Tests
 
-Use Vitest. Test files go in `__tests__` folders or with `.test.jsx` suffix.
+```python
+import pytest
+from docflow.rag import RAGProcessor, RAGConfig
 
-```jsx
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { FileUploader } from '../FileUploader';
-
-describe('FileUploader', () => {
-  it('calls onFilesAdded when files are dropped', async () => {
-    const onFilesAdded = vi.fn();
-    render(<FileUploader onFilesAdded={onFilesAdded} />);
+class TestRAGProcessor:
+    def test_process_file_success(self, tmp_path):
+        file = tmp_path / "test.md"
+        file.write_text("# Hello World")
+        
+        processor = RAGProcessor(RAGConfig())
+        result = processor.process_file(str(file))
+        
+        assert result.content == "# Hello World"
+        assert len(result.chunks) > 0
     
-    // ... test implementation
-  });
-  
-  it('shows disabled state correctly', () => {
-    render(<FileUploader onFilesAdded={vi.fn()} disabled />);
-    // ... assertions
-  });
-});
+    def test_process_file_empty_path(self):
+        processor = RAGProcessor(RAGConfig())
+        with pytest.raises(ValueError):
+            processor.process_file("")
 ```
 
-### What to Test
+### Java Tests
 
-**Do test:**
-- Business logic
-- Edge cases
-- Error handling
-- User interactions
+```java
+import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-**Don't test:**
-- External libraries
-- Simple getters/setters
-- CSS styling
+class RAGProcessorTest {
+    private RAGProcessor processor;
+    
+    @BeforeEach
+    void setUp() {
+        processor = new RAGProcessor(RAGConfig.defaultConfig());
+    }
+    
+    @Test
+    void processFile_validFile_returnsDocument() throws Exception {
+        RAGDocument doc = processor.processFile("src/test/resources/sample.md");
+        assertNotNull(doc);
+        assertFalse(doc.getChunks().isEmpty());
+    }
+    
+    @Test
+    void processFile_emptyPath_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            processor.processFile("");
+        });
+    }
+}
+```
 
 ## Pull Request Process
 
 ### 1. Before Submitting
 
-- [ ] All tests pass (`go test ./...` and `npm test`)
-- [ ] Code is formatted (`gofmt` and Prettier)
-- [ ] No console.logs or debug statements
+- [ ] All tests pass across all SDKs you modified
+- [ ] Code is formatted (gofmt, black, google-java-format)
+- [ ] No debug statements or commented-out code
+- [ ] Documentation updated if needed
 - [ ] Commit messages are clear
 
 ### 2. PR Title Format
 
 ```
-feat: add batch processing support
-fix: handle empty files correctly
-docs: update API documentation
-refactor: simplify conversion logic
-test: add handler tests
+feat(go): add vector store support
+fix(python): handle unicode in filenames
+docs: update RAG pipeline documentation
+refactor(java): simplify batch processor
+test(all): increase coverage for chunker
 ```
 
 ### 3. PR Description Template
 
 ```markdown
 ## What
-
 Brief description of what this PR does.
 
 ## Why
-
 Why is this change needed?
 
 ## How
-
 How did you implement it? Any notable design decisions?
 
 ## Testing
-
 How did you test this? What test cases did you add?
 
-## Screenshots (if UI changes)
+## SDK Changes
+- [ ] Go SDK modified
+- [ ] Python SDK modified  
+- [ ] Java SDK modified
 
-Before/After screenshots if applicable.
+## Breaking Changes
+List any breaking changes (if applicable).
 ```
 
 ### 4. Review Process
 
 1. Submit PR
-2. CI runs tests
+2. CI runs tests for all SDKs
 3. Maintainer reviews
 4. Address feedback
 5. Get merged
 
-PRs are usually reviewed within a few days. If it's been a week, feel free to ping.
+## Adding New Features
 
-## Commit Messages
+### Adding to All SDKs
 
-Keep them short and descriptive. Use present tense.
+When adding a new feature, implement it in all three SDKs:
 
-```
-# Good
-feat: add PDF merge preview
-fix: handle unicode in filenames
-refactor: extract PDF service
+1. **Design first** - Create an issue describing the API
+2. **Python first** - Usually easiest to prototype
+3. **Go second** - Port with idiomatic Go patterns
+4. **Java third** - Port with enterprise patterns
+5. **Update docs** - Add to all README files
 
-# Bad
-Fixed the bug
-WIP
-asdfasdf
-```
+### Adding a New Format Converter
 
-## Project Structure Guidelines
+1. Create `formats/new_format.go/py/java`
+2. Implement `toMarkdown(data, filename)` method
+3. Add tests with sample files
+4. Register in format detection logic
+5. Update feature matrix in READMEs
 
-### Adding a New Feature
+### Adding a New Vector Store
 
-1. **Backend changes?** Add to appropriate service in `internal/service/`
-2. **New endpoint?** Add handler in `internal/handler/`, register in routes
-3. **Frontend changes?** Create component in `components/`, hook in `hooks/`
-4. **Always** add tests for new code
-
-### File Naming
-
-```
-# Backend (Go)
-service.go
-service_test.go
-
-# Frontend (React)
-ComponentName/
-  index.jsx
-  ComponentName.test.jsx
-```
+1. Create `storage/vector/new_store.go/py/java`
+2. Implement the VectorStore interface
+3. Add configuration class
+4. Add integration tests
+5. Document environment variables
 
 ## Questions?
 
-Open an issue with the `question` label. Don't be shy.
+Open an issue with the `question` label.
 
 ## Recognition
 
@@ -287,4 +301,4 @@ Contributors are added to the README. Significant contributors get mentioned in 
 
 ---
 
-That's it. Keep it clean, test your code, and have fun.
+Keep it clean, test your code, and have fun!
